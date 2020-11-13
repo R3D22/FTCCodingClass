@@ -3,10 +3,15 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-// I'm using TeleOp instead of Autonomos
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+
+
+// I'm using TeleOp instead of Autonomos
+//TeleOp is the section of the robot when it is used manually
+//Autonomos is used for the section of competition when the robot is working by itself
 
 @TeleOp(name="Homework_Red", group="Iterative Opmode")
 @Disabled
@@ -23,6 +28,9 @@ public class Homework_Red extends OpMode
         leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
         rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
 
+        hardwareMap.get(DistanceSensor.class, "Sensor");
+        //Did as you said
+
         leftDrive.setDirection(DcMotor.Direction.FORWARD);
         rightDrive.setDirection(DcMotor.Direction.REVERSE);
 
@@ -38,20 +46,24 @@ public class Homework_Red extends OpMode
         runtime.reset();
     }
 
+    public enum DistanceUnit
+            extends java.lang.Enum<DistanceUnit>
+    //When returning to the FTC coding site, it said I needed to
+    //Import this code, so I did, but I don't know how to fix the new
+    //Error that popped up.
+
     @Override
     public void loop() {
 
         double leftPower;
         double rightPower;
 
-        //double getDistance(DistanceUnit unit);
-        //static final double distanceOutOfRange;
-        //double getDistance(DistanceUnit unit);
+        double getDistance (DistanceUnit unit)
+        static final double distanceOutOfRange;
         
-                //I tried to include a distance sensor in the code above,
-                // but it seems I am missing an import.
-                // How do all the other codes that
-                // require ahrdware work but this one doesn't?
+        // I still don't understand why the
+        // code wants a semi colon instead of quotes,
+        // or why it isn't allowing the term static.
 
         double drive = -gamepad1.left_stick_y;
         double turn  =  gamepad1.right_stick_x;
