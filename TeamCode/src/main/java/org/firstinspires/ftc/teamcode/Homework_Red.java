@@ -21,6 +21,11 @@ public class Homework_Red extends OpMode
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
 
+    private DcMotor frontLeftMotor = null;
+    private DcMotor backLeftMotor = null;
+    private DcMotor frontRightMotor = null;
+    private DcMotor backRightMotor = null;
+
     @Override
     public void init() {
         telemetry.addData("Status", "Initialized");
@@ -28,11 +33,23 @@ public class Homework_Red extends OpMode
         leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
         rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
 
+
+        frontLeftMotor = hardwareMap.get(DcMotor.class, "frontLeftMotor");
+        backLeftMotor = hardwareMap.get(DcMotor.class, "backLeftMotor");
+        frontRightMotor = hardwareMap.get(DcMotor.class, "frontRightMotor");
+        backRightMotor = hardwareMap.get(DcMotor.class, "backRightMotor");
+
+
         hardwareMap.get(DistanceSensor.class, "Sensor");
         //Did as you said
 
         leftDrive.setDirection(DcMotor.Direction.FORWARD);
         rightDrive.setDirection(DcMotor.Direction.REVERSE);
+
+        frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
+        frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
+        backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
+        backRightMotor.setDirection(DcMotor.Direction.REVERSE);
 
         telemetry.addData("Status", "Initialized");
     }
@@ -58,7 +75,17 @@ public class Homework_Red extends OpMode
         double leftPower;
         double rightPower;
 
-        double getDistance (DistanceUnit unit)
+        double y = -gamepad1.left_stick_y; // Remember, this is reversed!
+        double x = gamepad1.left_stick_x;
+        double rx = gamepad1.right_stick_x;
+
+        frontLeftMotor.setPower(y + x + rx);
+        backLeftMotor.setPower(y - x + rx);
+        frontRightMotor.setPower(y - x - rx);
+        backRightMotor.setPower(y + x - rx);
+
+
+        double getDistance (DistanceUnit unit);
         static final double distanceOutOfRange;
         
         // I still don't understand why the
