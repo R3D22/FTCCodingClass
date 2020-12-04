@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.hardware.Servo;
 
 
 // I'm using TeleOp instead of Autonomos
@@ -18,38 +19,32 @@ import com.qualcomm.robotcore.util.Range;
 public class Homework_Red extends OpMode
 {
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftDrive = null;
-    private DcMotor rightDrive = null;
-
     private DcMotor frontLeftMotor = null;
     private DcMotor backLeftMotor = null;
     private DcMotor frontRightMotor = null;
     private DcMotor backRightMotor = null;
+    private Servo myServo = null;
+    boolean servo_open = true;
 
     @Override
     public void init() {
         telemetry.addData("Status", "Initialized");
 
-        leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
-        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
-
-
         frontLeftMotor = hardwareMap.get(DcMotor.class, "frontLeftMotor");
         backLeftMotor = hardwareMap.get(DcMotor.class, "backLeftMotor");
         frontRightMotor = hardwareMap.get(DcMotor.class, "frontRightMotor");
         backRightMotor = hardwareMap.get(DcMotor.class, "backRightMotor");
+        myServo = hardwareMap.get(Servo.class, "My_Servo");
 
 
         hardwareMap.get(DistanceSensor.class, "Sensor");
         //Did as you said
 
-        leftDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightDrive.setDirection(DcMotor.Direction.REVERSE);
-
         frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
         frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
         backRightMotor.setDirection(DcMotor.Direction.REVERSE);
+        myServo.setDirection(Servo.Direction.REVERSE);
 
         telemetry.addData("Status", "Initialized");
     }
@@ -72,17 +67,42 @@ public class Homework_Red extends OpMode
     @Override
     public void loop() {
 
-        double leftPower;
-        double rightPower;
-
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
         double x = gamepad1.left_stick_x;
         double rx = gamepad1.right_stick_x;
 
-        frontLeftMotor.setPower(y + x + rx);
-        backLeftMotor.setPower(y - x + rx);
-        frontRightMotor.setPower(y - x - rx);
-        backRightMotor.setPower(y + x - rx);
+        double frontLeftPower = y + x +rx;
+        double backLeftPower = y - x + rx;
+        double frontRightPower = y - x - rx;
+        double backRightPower = y + x - rx;
+
+        if (Math.abs(frontLeftPower) > 1 || Math.abs(backLeftPower) > 1 ||
+                Math.abs(frontRightPower) > 1 || Math.abs(backRightPower) > 1 ) {
+            // Find the largest power
+            double max = 0;
+            max = Math.max(Math.abs(frontLeftPower), Math.abs(backLeftPower));
+            max = Math.max(Math.abs(frontRightPower), max);
+            max = Math.max(Math.abs(backRightPower), max);
+
+            // Divide everything by max (it's positive so we don't need to worry
+            // about signs)
+            frontLeftPower /= max;
+            backLeftPower /= max;
+            frontRightPower /= max;
+            backRightPower /= max;
+        }
+
+        if (gamepad1.a && servo_open){
+            myServo.setPosition(90);
+        }
+        else if (gamepad1.a && !servo_open){
+            myServo.setPosition((0));
+        }
+
+        frontLeftMotor.setPower(frontLeftPower);
+        backLeftMotor.setPower(backLeftPower);
+        frontRightMotor.setPower(frontRightPower);
+        backRightMotor.setPower(backRightPower);
 
 
         double getDistance (DistanceUnit unit);
@@ -97,11 +117,6 @@ public class Homework_Red extends OpMode
         leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
         rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
 
-        leftDrive.setPower(leftPower);
-        rightDrive.setPower(rightPower);
-
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
     }
 
     @Override

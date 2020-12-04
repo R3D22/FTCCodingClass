@@ -96,10 +96,24 @@ public class AutoFrameworkLinear extends LinearOpMode {
                 }
             } else if (stage==1) {
                 mecanum(0, 1, 0);
-                if (runtime.seconds()>=5) {
+                if (runtime.seconds()>=10) {
                     stage++;
                 }
             }
+            else if (stage==2) {
+                mecanum(0, 1, 0);
+                if (runtime.seconds()>=15) {
+                    stage++;
+                }
+            }
+            else if (stage==3) {
+                mecanum(0, 1, 0);
+                if (runtime.seconds()>=20) {
+                    stage++;
+                }
+            }
+
+
 
             if (runtime.seconds()>=5) {
                 mecanum(1, 0, 0);
