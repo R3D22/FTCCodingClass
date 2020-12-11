@@ -29,14 +29,11 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.hardware.Servo;
-
 
 
 /**
@@ -54,11 +51,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name="Basic: Linear OpMode", group="Linear Opmode")
 @Disabled
-public class AutoFrameworkLinear extends LinearOpMode {
+public class AutoFrameworkLinearCOPY extends LinearOpMode {
 
-    private double TICKS_PER_ROTATION=1500;
-    private double INCHES_PER_ROTATION=3;
-    private double TICKS_RER_INCH=TICKS_PER_ROTATION*INCHES_PER_ROTATION;
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor frontLeftDrive = null;
@@ -81,11 +75,6 @@ public class AutoFrameworkLinear extends LinearOpMode {
         backLeftDrive = hardwareMap.get(DcMotor.class, "back_left_drive");
         backRightDrive = hardwareMap.get(DcMotor.class, "back_right_drive");
 
-        frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -101,35 +90,37 @@ public class AutoFrameworkLinear extends LinearOpMode {
         while (opModeIsActive()) {
             if (stage == 0) {
                 mecanum(1, 0, 0);
-                if (Math.abs(frontLeftDrive.getCurrentPosition())>= 10*TICKS_RER_INCH){
+                if (runtime.seconds()>=5) {
+                    runtime.reset();
                     stage++;
-                    reset_encoders();
                 }
-            }
-            else if (stage == 1) {
-                mecanum(0, -1, 0);
-
-                if (Math.abs(frontLeftDrive.getCurrentPosition())>= 10*TICKS_RER_INCH){
-                    stage++;
-                    reset_encoders();
-                }
-            }
-            else if (stage == 2) {
-                mecanum(-1, 0, 0);
-
-                if (Math.abs(frontLeftDrive.getCurrentPosition())>= 10*TICKS_RER_INCH){
-                    stage++;
-                    reset_encoders();
-                }
-            }
-            else if (stage == 3) {
+            } else if (stage==1) {
                 mecanum(0, 1, 0);
-
-                if (Math.abs(frontLeftDrive.getCurrentPosition())>= 10*TICKS_RER_INCH){
+                if (runtime.seconds()>=10) {
                     stage++;
-                    reset_encoders();
                 }
             }
+            else if (stage==2) {
+                mecanum(0, 1, 0);
+                if (runtime.seconds()>=15) {
+                    stage++;
+                }
+            }
+            else if (stage==3) {
+                mecanum(0, 1, 0);
+                if (runtime.seconds()>=20) {
+                    stage++;
+                }
+            }
+
+
+
+            if (runtime.seconds()>=5) {
+                mecanum(1, 0, 0);
+            }
+
+
+
 
         }
 
@@ -159,17 +150,6 @@ public class AutoFrameworkLinear extends LinearOpMode {
         backLeftDrive.setPower(backLeftPower);
         frontRightDrive.setPower(frontRightPower);
         backRightDrive.setPower(backRightPower);
-    }
-
-    public void reset_encoders(){
-        frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
 

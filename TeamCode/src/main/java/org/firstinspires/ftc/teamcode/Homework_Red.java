@@ -58,12 +58,6 @@ public class Homework_Red extends OpMode
         runtime.reset();
     }
 
-    public enum DistanceUnit
-            extends java.lang.Enum<DistanceUnit>
-    //When returning to the FTC coding site, it said I needed to
-    //Import this code, so I did, but I don't know how to fix the new
-    //Error that popped up.
-
     @Override
     public void loop() {
 
@@ -105,19 +99,12 @@ public class Homework_Red extends OpMode
         backRightMotor.setPower(backRightPower);
 
 
-        double getDistance (DistanceUnit unit);
-        static final double distanceOutOfRange;
-        
-        // I still don't understand why the
         // code wants a semi colon instead of quotes,
         // or why it isn't allowing the term static.
 
         double drive = -gamepad1.left_stick_y;
         double turn  =  gamepad1.right_stick_x;
-        leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-        rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
 
-    }
 
     @Override
     public void stop() {

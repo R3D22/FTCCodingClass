@@ -32,7 +32,10 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
  * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
@@ -54,6 +57,8 @@ public class Servo_Example extends OpMode
     // Declare OpMode members.
     private Servo myServo = null;
     boolean servo_open=true;
+    private ElapsedTime runtime = new ElapsedTime();
+
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -67,6 +72,7 @@ public class Servo_Example extends OpMode
         myServo.setDirection(Servo.Direction.REVERSE);
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
+
     }
 
     public void loop() {
@@ -74,6 +80,14 @@ public class Servo_Example extends OpMode
             myServo.setPosition(Servo.MIN_POSITION);
         } else if (gamepad1.a && !servo_open) {
             myServo.setPosition(Servo.MAX_POSITION/2);
+            }
+
+        myServo.setPosition(0.0);
+        if (runtime.seconds()>=5) {
+            myServo.setPosition(1.0);
+        } else if (runtime.seconds()>=10) {
+            myServo.setPosition(0.0);
         }
+
     }
-}
+    }
