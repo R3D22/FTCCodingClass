@@ -16,8 +16,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name="Homework_Red", group="Iterative Opmode")
 @Disabled
-public class Homework_Red extends OpMode
-{
+public class Homework_Red extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor frontLeftMotor = null;
     private DcMotor backLeftMotor = null;
@@ -65,13 +64,13 @@ public class Homework_Red extends OpMode
         double x = gamepad1.left_stick_x;
         double rx = gamepad1.right_stick_x;
 
-        double frontLeftPower = y + x +rx;
+        double frontLeftPower = y + x + rx;
         double backLeftPower = y - x + rx;
         double frontRightPower = y - x - rx;
         double backRightPower = y + x - rx;
 
         if (Math.abs(frontLeftPower) > 1 || Math.abs(backLeftPower) > 1 ||
-                Math.abs(frontRightPower) > 1 || Math.abs(backRightPower) > 1 ) {
+                Math.abs(frontRightPower) > 1 || Math.abs(backRightPower) > 1) {
             // Find the largest power
             double max = 0;
             max = Math.max(Math.abs(frontLeftPower), Math.abs(backLeftPower));
@@ -86,10 +85,9 @@ public class Homework_Red extends OpMode
             backRightPower /= max;
         }
 
-        if (gamepad1.a && servo_open){
+        if (gamepad1.a && servo_open) {
             myServo.setPosition(90);
-        }
-        else if (gamepad1.a && !servo_open){
+        } else if (gamepad1.a && !servo_open) {
             myServo.setPosition((0));
         }
 
@@ -103,11 +101,11 @@ public class Homework_Red extends OpMode
         // or why it isn't allowing the term static.
 
         double drive = -gamepad1.left_stick_y;
-        double turn  =  gamepad1.right_stick_x;
+        double turn = gamepad1.right_stick_x;
 
 
-    @Override
-    public void stop() {
+        public void stop () {
+        }
+
     }
-
 }

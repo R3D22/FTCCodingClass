@@ -51,7 +51,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name="Basic: Linear OpMode", group="Linear Opmode")
 @Disabled
-public class AutoFrameworkLinearCOPY extends LinearOpMode {
+public class AutoFrameworkLinearCOPY extends BaseRobot {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();

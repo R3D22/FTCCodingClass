@@ -29,21 +29,13 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import android.graphics.drawable.GradientDrawable;
-
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
@@ -62,11 +54,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @TeleOp(name="Basic: Linear OpMode", group="Linear Opmode")
 @Disabled
-public class AutoFrameworkLinear extends LinearOpMode {
+public class AutoFrameworkLinear_COPY2 extends BaseRobot {
 
-    private double TICKS_PER_ROTATION=1500;
-    private double INCHES_PER_ROTATION=3;
-    private double TICKS_RER_INCH=TICKS_PER_ROTATION*INCHES_PER_ROTATION;
+    private double TICKS_PER_ROTATION = 1500;
+    private double INCHES_PER_ROTATION = 3;
+    private double TICKS_RER_INCH = TICKS_PER_ROTATION * INCHES_PER_ROTATION;
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor frontLeftDrive = null;
@@ -74,7 +66,6 @@ public class AutoFrameworkLinear extends LinearOpMode {
     private DcMotor backLeftDrive = null;
     private DcMotor backRightDrive = null;
 
-    Orientation angles;
     BNO055IMU imu;
     Orientation lastAngles = new Orientation();
 
@@ -88,7 +79,7 @@ public class AutoFrameworkLinear extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        frontLeftDrive  = hardwareMap.get(DcMotor.class, "front_left_drive");
+        frontLeftDrive = hardwareMap.get(DcMotor.class, "front_left_drive");
         frontRightDrive = hardwareMap.get(DcMotor.class, "front_right_drive");
         backLeftDrive = hardwareMap.get(DcMotor.class, "back_left_drive");
         backRightDrive = hardwareMap.get(DcMotor.class, "back_right_drive");
@@ -109,118 +100,48 @@ public class AutoFrameworkLinear extends LinearOpMode {
 
         parameters.mode = BNO055IMU.SensorMode.IMU;
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.loggingEnabled = false;
-
-
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-
-        imu.initialize(parameters);
-
-
 
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             if (stage == 0) {
-                mecanum(0, 0, 1);
-                if (rotation_completed(1.0)){
+                mecanum(1, 0, 0);
+                if (Math.abs(frontLeftDrive.getCurrentPosition()) >= 10 * TICKS_RER_INCH) {
                     stage++;
                     reset_encoders();
                 }
-            }
-            else if (stage == 1) {
+            } else if (stage == 1) {
                 mecanum(0, -1, 0);
 
-                if (Math.abs(frontLeftDrive.getCurrentPosition())>= 10*TICKS_RER_INCH){
+                if (Math.abs(frontLeftDrive.getCurrentPosition()) >= 10 * TICKS_RER_INCH) {
                     stage++;
                     reset_encoders();
                 }
-            }
-            else if (stage == 2) {
+            } else if (stage == 2) {
                 mecanum(-1, 0, 0);
 
-                if (Math.abs(frontLeftDrive.getCurrentPosition())>= 10*TICKS_RER_INCH){
+                if (Math.abs(frontLeftDrive.getCurrentPosition()) >= 10 * TICKS_RER_INCH) {
                     stage++;
                     reset_encoders();
                 }
-            }
-            else if (stage == 3) {
+            } else if (stage == 3) {
                 mecanum(0, 1, 0);
 
-                if (Math.abs(frontLeftDrive.getCurrentPosition())>= 10*TICKS_RER_INCH){
+                if (Math.abs(frontLeftDrive.getCurrentPosition()) >= 10 * TICKS_RER_INCH) {
                     stage++;
                     reset_encoders();
                 }
             }
 
         }
-
-    }
-
-    public boolean rotation_completed(double angle) {
-        if (angle<0) {
-            if (angles.firstAngle<=angle) {
-                //angles stores 3 different angles for the X, Y, and Z axes, but the robot is only going rotate in one of these axes (unless it does a flip).
-                //firstAngle refers to a specific one one of these angles, determined by AxesOrder.
-                return true;
-            }
-        } else {
-            if (angles.firstAngle>=angle) {
-                return true;
-            }
-        }
-        return false; //this line only runs if the function hasn't already returned true; boolean functions are required to return either true or false.
-        //this checks whether the robot has gotten to a certain angle.
-        //The imu returns a negative value for left turns and a positive one for right turns, which makes having the separate if statements necessary
-        //(In one direction, having  a greater angle than the target will mean you've overshot, while in the other direction, it will mean you haven't reached your target yet)
 
     }
 
     private void all_run_using_encoders() {
     }
-
-    public void mecanum (double y, double x, double rx) {
-        double frontLeftPower=y + x + rx;
-        double backLeftPower=y - x + rx;
-        double frontRightPower=y - x - rx;
-        double backRightPower=y + x - rx;
-        if (Math.abs(frontLeftPower) > 1 || Math.abs(backLeftPower) > 1 ||
-                Math.abs(frontRightPower) > 1 || Math.abs(backRightPower) > 1 ) {
-            // Find the largest power
-            double max = 0;
-            max = Math.max(Math.abs(frontLeftPower), Math.abs(backLeftPower));
-            max = Math.max(Math.abs(frontRightPower), max);
-            max = Math.max(Math.abs(backRightPower), max);
-
-            // Divide everything by max (it's positive so we don't need to worry
-            // about signs)
-            frontLeftPower /= max;
-            backLeftPower /= max;
-            frontRightPower /= max;
-            backRightPower /= max;
-        }
-        frontLeftDrive.setPower(frontLeftPower);
-        backLeftDrive.setPower(backLeftPower);
-        frontRightDrive.setPower(frontRightPower);
-        backRightDrive.setPower(backRightPower);
-    }
-
-    public void reset_encoders(){
-        frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-
-
-
 }
+
